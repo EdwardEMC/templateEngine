@@ -1,6 +1,7 @@
 //installed packages
 const inquirer = require("inquirer");
 const fs = require("fs");
+const chalk = require("chalk");
 
 //class files
 const Manager = require("./lib/manager");
@@ -13,35 +14,39 @@ const managerTemp = require("./templates/managerTemp");
 const engineerTemp = require("./templates/engineerTemp");
 const internTemp = require("./templates/internTemp");
 
+//role options for input
 const roles = [Manager, Engineer, Intern];
-const teamMembers = []; //store the generated team members from user input
 
-let x = 0; //counter for question display/array
+//generated team members from user input
+const teamMembers = []; 
+
+//counter for question display/array
+let x = 0; 
 
 const questions = [
     {
         name: "What is the manager's name?",
         id: "What is the manager's Id?",
         email: "Please enter the manager's email address:",
-        unique: "Please enter the manager's office number:",
-        role: "Manager",
-        input: ["name", "id", "email", "unique"] //unique = office
+        unique: "Please enter the manager's office number:",//unique = office
+        val: async unique => {
+            if(unique.match(/^[0-9]+$/)) {
+                return true;
+            }
+            return chalk.red("Please enter a valid number");
+        }
     },
     {
         name: "What is the engineer's name?",
         id: "What is the engineer's Id?",
         email: "Please enter the engineer's email address:",
-        unique: "Please enter the engineer's github username:",
-        role: "Engineer",
-        input: ["name", "id", "email", "unique"] //unique = github
+        unique: "Please enter the engineer's github username:",//unique = github
     },
     {
         name: "What is the intern's name?",
         id: "What is the intern's Id?",
         email: "Please enter the intern's email address:",
-        unique: "Please enter the intern's school:",
-        role: "Intern",
-        input: ["name", "id", "email", "unique"] //unique = school
+        unique: "Please enter the intern's school:",//unique = school
     }
 ];
 
@@ -49,26 +54,45 @@ const question = () => {
     return inquirer
     .prompt([{
         type: "input",
-        message: questions[x].name,
-        name: questions[x].input[0]
+        message: chalk.cyan(questions[x].name),
+        name: "name",
+        validate: async name => {
+            if(name.match(/^[A-Za-z]+$/)) {
+                return true;
+            }
+            return chalk.red("Please enter a valid name");
+        }
     },
     {
         type: "input",
-        message: questions[x].id,
-        name: questions[x].input[1]
+        message: chalk.blue(questions[x].id),
+        name: "id",
+        validate: async id => {
+            if(id.match(/^[0-9]+$/)) {
+                return true;
+            }
+            return chalk.red("Please enter a valid number");
+        }
     },
     {
         type: "input",
-        message: questions[x].email,
-        name: questions[x].input[2]
+        message: chalk.blue(questions[x].email),
+        name: "email",
+        validate: async id => {
+            if(id.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                return true;
+            }
+            return chalk.red("Please enter a valid email");
+        }
     },
     {
         type: "input",
-        message: questions[x].unique,
-        name: questions[x].input[3]
+        message: chalk.blue(questions[x].unique),
+        name: "unique",
+        validate: questions[x].val //only validation needed for manager as github/school can use any characters hence no val in other questions
     }]).then(function(res) {
 
-        const person = new roles[x](res.name, res.id, res.email, res.unique); //still need to fix email and title???????? can use questions[x].role?
+        const person = new roles[x](res.name, res.id, res.email, res.unique);
 
         teamMembers.push(person); //add the new team member to the teamMembers array
 
@@ -86,24 +110,25 @@ const askAgain = () => {
     return inquirer
     .prompt([{
         type: "input",
-        message: "Would you like to add another? (Y/N)",
+        message: chalk.magenta("Would you like to add another? (Y/N)"),
         name: "continue",
     }]).then(function(response) {
         let choice = response.continue.toLowerCase();
+        let length = roles.length; //allowing for scalability for different roles
         if (choice === "y") {
             question();
         }
         else if(choice === "n") {
             x++; //moves on to next role to fill
-            if(x<3) {
+            if(x<length) {
                 question();
             }
-            else if(x=3) {
+            else if(x=length) {
                 switchFunc();
             }
         } 
         else if(choice !== "y" || choice !== "n") {
-            console.log("Please input a correct character:");
+            chalk.red(console.log("Please input a correct character:"));
             askAgain();
         }
     });
@@ -123,7 +148,7 @@ const switchFunc = () => { //generate html from teamMembers array
                 let int = internTemp(member);
                 return myTeam.push(int);
             default:
-                return console.log("Something's gone wrong!");
+                return chalk.red(console.log("Something's gone wrong!"));
         }
     });
     const index = indexTemp(myTeam.join("\n")); //combine the split team member string literals and insert into index.html
@@ -133,14 +158,10 @@ const switchFunc = () => { //generate html from teamMembers array
 const generateHTML = myTeam => { //param1 is the string literal with the values filled in
     fs.writeFile("./output/myTeam.html", myTeam, function(err) { //need to access templates
         if(err) {
-            return console.log(err);
+            return chalk.red(console.log(err));
         }
-        console.log("success!");
+        chalk.green(console.log("success!"));
     });
 }
 
-const startApp = () => { //not necessary atm but cleans it up a little
-    question();
-}
-
-startApp();
+question();

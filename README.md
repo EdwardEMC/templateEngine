@@ -15,3 +15,6 @@
 //put the input into the code
 
 //generate the html
+
+STILL TO DO!
+//add validation, update readme
