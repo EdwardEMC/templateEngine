@@ -26,9 +26,9 @@ let x = 0;
 const questions = [
     {
         name: "What is the manager's name?",
-        id: "What is the manager's Id?",
-        email: "Please enter the manager's email address:",
-        unique: "Please enter the manager's office number:",//unique = office
+        id: "- What is the manager's Id?",
+        email: "- Please enter the manager's email address:",
+        unique: "- Please enter the manager's office number:",//unique = office
         val: async unique => {
             if(unique.match(/^[0-9]+$/)) {
                 return true;
@@ -38,15 +38,15 @@ const questions = [
     },
     {
         name: "What is the engineer's name?",
-        id: "What is the engineer's Id?",
-        email: "Please enter the engineer's email address:",
-        unique: "Please enter the engineer's github username:",//unique = github
+        id: "- What is the engineer's Id?",
+        email: "- Please enter the engineer's email address:",
+        unique: "- Please enter the engineer's github username:",//unique = github
     },
     {
         name: "What is the intern's name?",
-        id: "What is the intern's Id?",
-        email: "Please enter the intern's email address:",
-        unique: "Please enter the intern's school:",//unique = school
+        id: "- What is the intern's Id?",
+        email: "- Please enter the intern's email address:",
+        unique: "- Please enter the intern's school:",//unique = school
     }
 ];
 
@@ -91,7 +91,6 @@ const question = () => {
         name: "unique",
         validate: questions[x].val //only validation needed for manager as github/school can use any characters hence no val in other questions
     }]).then(function(res) {
-
         const person = new roles[x](res.name, res.id, res.email, res.unique);
 
         teamMembers.push(person); //add the new team member to the teamMembers array
