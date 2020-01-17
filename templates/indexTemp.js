@@ -1,4 +1,5 @@
-`<!DOCTYPE html>
+module.exports = myTeam => {
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,7 +27,8 @@
         <h1 class="title">My Team</h1>
     </header>
     <div class="import">
-        <!--Area to display team members-->
+       ${myTeam}
     </div>
 </body>
 </html>`
+};
