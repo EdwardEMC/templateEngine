@@ -1,19 +1,3 @@
-//ask user for manager input
-
-//ask user for engineer input
-//validate
-//ask user if there is more engineers
-
-//ask user for intern input
-//validate
-//ask user if there is more interns
-
-//store that input
-
-//put the input into the code
-
-//generate the html
-
 //installed packages
 const inquirer = require("inquirer");
 const fs = require("fs");
@@ -23,8 +7,10 @@ const Manager = require("./lib/manager");
 const Engineer = require("./lib/engineer");
 const Intern = require("./lib/intern");
 
+//template files
+
 const roles = [Manager, Engineer, Intern];
-const teamMembers = [];
+const teamMembers = []; //store the generated team members from user input
 
 let x = 0; //counter for question display/array
 
@@ -78,11 +64,11 @@ const question = () => {
         name: questions[x].input[3]
     }]).then(function(res) {
 
-        const person = new roles[x](res.name, res.id, questions[x].role, res.email, res.unique); //still need to fix email and title????????
+        const person = new roles[x](res.name, res.id, res.email, res.unique); //still need to fix email and title???????? can use questions[x].role?
 
         teamMembers.push(person); //add the new team member to the teamMembers array
 
-        if(person.getRole() !== "Manager") {
+        if(person.getRole() !== "Manager") { //only one manager per team
             askAgain();
         }
         else {
@@ -109,7 +95,7 @@ const askAgain = () => {
                 question();
             }
             else if(x=3) {
-                return console.log(teamMembers);
+                switchFunc();
             }
         } 
         else if(choice !== "y" || choice !== "n") {
@@ -119,26 +105,40 @@ const askAgain = () => {
     });
 }
 
-const generateHTML = param1 => {
-    fs.writeFile()
+const switchFunc = () => { //generate html from teamMembers array
+    teamMembers.forEach(member => {
+        switch(member.getRole()) {
+            case "Manager":
+                return generateHTML(member);
+            case "Engineer":
+                return generateHTML(member);
+            case "Intern":
+                return generateHTML(member);
+            default:
+                return console.log("Something's gone wrong!");
+        }
+    });
 }
 
-const startApp = () => {
-    question().then(() => {
-        teamMembers.forEach(member => {
-            switch(member.getRole()) {
-                case "Manager":
-                    return generateHTML(member);
-                case "Engineer":
-                    return generateHTML(member);
-                case "Intern":
-                    return generateHTML(member);
-                default:
-                    return console.log("Something's gone wrong!");
-            }
-        });
+const generateHTML = param1 => { //param1 is the object for each team member
+    const data = fs.readFileSync("./templates/"+(param1.getRole()).toLowerCase()+".js", function(err, data){
+        if(err) {
+            return console.log(err);
+        }
+        return data;
     });
-    //generate html from teamMembers array
+    const card = data.toString();
+
+    fs.writeFile("./output/" +param1.name+".js", card, function(err) { //need to access templates
+        if(err) {
+            return console.log(err);
+        }
+        console.log("success!");
+    });
+}
+
+const startApp = () => { //not necessary atm but cleans it up a little
+    question();
 }
 
 startApp();
