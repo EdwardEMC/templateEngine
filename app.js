@@ -57,7 +57,7 @@ const question = () => {
         message: chalk.cyan(questions[x].name),
         name: "name",
         validate: async name => {
-            if(name.match(/^[A-Za-z]+$/)) {
+            if(name.match(/^[A-Za-z\s]+$/)) {
                 return true;
             }
             return chalk.red("Please enter a valid name");
@@ -154,12 +154,12 @@ const switchFunc = () => { //generate html from teamMembers array
     generateHTML(index);
 }
 
-const generateHTML = myTeam => { //param1 is the string literal with the values filled in
-    fs.writeFile("./output/myTeam.html", myTeam, function(err) { //need to access templates
+const generateHTML = output => { //param1 is the string literal with the values filled in
+    fs.writeFile("./output/myTeam.html", output, function(err) {
         if(err) {
             return chalk.red(console.log(err));
         }
-        chalk.green(console.log("success!"));
+        console.log("success!");
     });
 }
 

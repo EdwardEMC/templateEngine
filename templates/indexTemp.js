@@ -21,6 +21,7 @@ module.exports = myTeam => {
             margin-top: 20px;
         }
     </style>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </head>
 <body style="margin:0;">
     <header style="height:150px; width:100%; background-color:aquamarine;">
