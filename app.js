@@ -79,7 +79,7 @@ const question = () => {
         message: chalk.blue(questions[x].email),
         name: "email",
         validate: async id => {
-            if(id.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+            if(id.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/)) {
                 return true;
             }
             return chalk.red("Please enter a valid email");
